@@ -18,7 +18,7 @@ actionRouter.get("/", (req, res) => {
 
 actionRouter.get("/:id", (req, res) => {
   actionId = req.params.id;
-  db.getById(actionId)
+  db.get(actionId)
     .then(user => {
       if (user) {
         res.status(200).json(user);
