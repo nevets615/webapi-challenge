@@ -1,6 +1,6 @@
 const express = require("express");
 
-const db = require("../dbConfig.js");
+const db = require("./projectModel");
 const projectRouter = express.Router();
 
 projectRouter.get("/", (req, res) => {
