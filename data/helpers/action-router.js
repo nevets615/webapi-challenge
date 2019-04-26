@@ -1,7 +1,6 @@
 const express = require("express");
 const db = require("./actionModel");
 
-
 const actionRouter = express.Router();
 
 actionRouter.get("/", (req, res) => {
@@ -10,9 +9,7 @@ actionRouter.get("/", (req, res) => {
       res.status(201).json(actions);
     })
     .catch(err => {
-      res
-        .status(500)
-        .json({ error: "The actions could not be retrieved." });
+      res.status(500).json({ error: "The actions could not be retrieved." });
     });
 });
 
@@ -38,7 +35,7 @@ actionRouter.get("/:id", (req, res) => {
 actionRouter.post("/:id", (req, res) => {
   const newAction = req.body;
 
-  if (newAction.text && newAction.user_id) {
+  if (newAction.description && newAction.notes && newAction.project_id) {
     db.insert(newAction)
       .then(action => {
         res.status(201).json(action);
@@ -59,8 +56,8 @@ actionRouter.delete("/:id", (req, res) => {
   const actionId = req.params.id;
   db.remove(actionId)
     .then(deleted => {
-      if (posts) {
-        res.status(200).json(action);
+      if (deleted) {
+        res.status(200).json(deleted);
       } else {
         res
           .status(404)
@@ -78,7 +75,9 @@ actionRouter.delete("/:id", (req, res) => {
 actionRouter.put("/:id", (req, res) => {
   const actionId = req.params.id;
   const updateInfo = req.body;
-  if (updateInfo.text && updateInfo.project_id) {
+
+  console.log(updateInfo);
+  if (updateInfo.notes && updateInfo.description) {
     db.update(actionId, updateInfo)
       .then(action => {
         res.status(200).json(action);

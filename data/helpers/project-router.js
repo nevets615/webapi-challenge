@@ -34,12 +34,12 @@ projectRouter.get("/:id", (req, res) => {
     });
 });
 
-projectRouter.get("/projects/:userId", (req, res) => {
-  console.log(req.params.userId);
-  db.getProjectActions(req.params.userId)
+projectRouter.get("/actions/:projectId", (req, res) => {
+  console.log(req.params.projectId);
+  db.getProjectActions(req.params.projectId)
     .then(project => {
       console.log(project);
-      if (post) {
+      if (project) {
         res.status(200).json(project);
       } else {
         res
@@ -52,18 +52,21 @@ projectRouter.get("/projects/:userId", (req, res) => {
     });
 });
 projectRouter.post("/", (req, res) => {
-  const newProject = req.body;
-  console.log("request body: ", newProject);
+  const newName = req.body;
+  const newDescription = req.body;
+  console.log("request body: ", newName && newDescription);
 
-  if (newProject.name && newProject.id) {
-    db.insert(newProject)
-      .then(user => {
+  if (newName.name && newDescription.description && newName.id) {
+    db.insert(newName && newDescription)
+      .then(project => {
         res.status(201).json(project);
       })
       .catch(err => {
         res
           .status(400)
-          .json({ errorMessage: "Please provide name and description for the project." });
+          .json({
+            errorMessage: "Please provide name and description for the project."
+          });
       });
   } else {
     res.status(500).json({
@@ -95,9 +98,10 @@ projectRouter.delete("/:id", (req, res) => {
 
 projectRouter.put("/:id", (req, res) => {
   const projectId = req.params.id;
-  const updateInfo = req.body;
-  if (updateInfo.name) {
-    db.update(projectId, updateInfo)
+  const updateProject = req.body;
+
+  if (updateProject.name && updateProject.description) {
+    db.update(projectId, updateProject)
       .then(projects => {
         res.status(200).json(projects);
       })
@@ -108,7 +112,9 @@ projectRouter.put("/:id", (req, res) => {
         });
       });
   } else {
-    res.status(400).json({ message: "Please provide a name for the projects." });
+    res
+      .status(400)
+      .json({ message: "Please provide a name for the projects." });
   }
 });
 
